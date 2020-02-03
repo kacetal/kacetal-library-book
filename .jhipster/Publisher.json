@@ -1,0 +1,36 @@
+{
+    "name": "Publisher",
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 50
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "book",
+            "otherEntityRelationshipName": "publisher",
+            "relationshipName": "books"
+        }
+    ],
+    "changelogDate": "20200203105309",
+    "entityTableName": "publisher",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": false,
+    "readOnly": false,
+    "clientRootFolder": "",
+    "applications": [
+        "kacetalLibraryGateway",
+        "kacetalLibraryBook"
+    ],
+    "microserviceName": "kacetalLibraryBook"
+}

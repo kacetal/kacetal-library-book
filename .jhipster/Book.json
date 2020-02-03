@@ -1,0 +1,67 @@
+{
+    "name": "Book",
+    "fields": [
+        {
+            "fieldName": "isbn",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "unique",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 13
+        },
+        {
+            "fieldName": "title",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 100
+        },
+        {
+            "fieldName": "publishDate",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "cover",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "image"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-many",
+            "otherEntityName": "author",
+            "otherEntityRelationshipName": "books",
+            "relationshipName": "authors",
+            "otherEntityField": "id",
+            "ownerSide": true
+        },
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "publisher",
+            "otherEntityRelationshipName": "books",
+            "relationshipName": "publisher",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20200203105307",
+    "entityTableName": "book",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": false,
+    "readOnly": false,
+    "clientRootFolder": "",
+    "applications": [
+        "kacetalLibraryGateway",
+        "kacetalLibraryBook"
+    ],
+    "microserviceName": "kacetalLibraryBook"
+}
