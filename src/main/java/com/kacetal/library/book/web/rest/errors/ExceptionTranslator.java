@@ -1,7 +1,6 @@
 package com.kacetal.library.book.web.rest.errors;
 
 import io.github.jhipster.web.util.HeaderUtil;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +31,11 @@ import java.util.stream.Collectors;
 public class ExceptionTranslator implements ProblemHandling, SecurityAdviceTrait {
 
     private static final String FIELD_ERRORS_KEY = "fieldErrors";
+
     private static final String MESSAGE_KEY = "message";
+
     private static final String PATH_KEY = "path";
+
     private static final String VIOLATIONS_KEY = "violations";
 
     @Value("${jhipster.clientApp.name}")

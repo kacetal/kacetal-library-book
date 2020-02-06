@@ -1,8 +1,9 @@
 package com.kacetal.library.book.domain;
 
-import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.assertThat;
 import com.kacetal.library.book.web.rest.TestUtil;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PublisherTest {
 

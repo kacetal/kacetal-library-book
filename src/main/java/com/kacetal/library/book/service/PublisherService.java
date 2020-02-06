@@ -1,7 +1,6 @@
 package com.kacetal.library.book.service;
 
 import com.kacetal.library.book.domain.Publisher;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

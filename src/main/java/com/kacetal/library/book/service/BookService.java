@@ -1,7 +1,6 @@
 package com.kacetal.library.book.service;
 
 import com.kacetal.library.book.domain.Book;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -34,7 +33,7 @@ public interface BookService {
      * @return the list of entities.
      */
     Page<Book> findAllWithEagerRelationships(Pageable pageable);
-    
+
     /**
      * Get the "id" book.
      *

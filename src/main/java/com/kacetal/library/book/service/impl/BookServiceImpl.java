@@ -1,11 +1,10 @@
 package com.kacetal.library.book.service.impl;
 
-import com.kacetal.library.book.service.BookService;
 import com.kacetal.library.book.domain.Book;
 import com.kacetal.library.book.repository.BookRepository;
+import com.kacetal.library.book.service.BookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -61,7 +60,7 @@ public class BookServiceImpl implements BookService {
     public Page<Book> findAllWithEagerRelationships(Pageable pageable) {
         return bookRepository.findAllWithEagerRelationships(pageable);
     }
-    
+
 
     /**
      * Get one book by id.

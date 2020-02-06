@@ -5,7 +5,6 @@ import com.kacetal.library.book.domain.Author;
 import com.kacetal.library.book.repository.AuthorRepository;
 import com.kacetal.library.book.service.AuthorService;
 import com.kacetal.library.book.web.rest.errors.ExceptionTranslator;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -25,8 +24,13 @@ import java.util.List;
 import static com.kacetal.library.book.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for the {@link AuthorResource} REST controller.
@@ -35,12 +39,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AuthorResourceIT {
 
     private static final String DEFAULT_FIRST_NAME = "AAAAAAAAAA";
+
     private static final String UPDATED_FIRST_NAME = "BBBBBBBBBB";
 
     private static final String DEFAULT_LAST_NAME = "AAAAAAAAAA";
+
     private static final String UPDATED_LAST_NAME = "BBBBBBBBBB";
 
     private static final String DEFAULT_PSEUDONYM = "AAAAAAAAAA";
+
     private static final String UPDATED_PSEUDONYM = "BBBBBBBBBB";
 
     @Autowired
@@ -68,21 +75,9 @@ public class AuthorResourceIT {
 
     private Author author;
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        final AuthorResource authorResource = new AuthorResource(authorService);
-        this.restAuthorMockMvc = MockMvcBuilders.standaloneSetup(authorResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
-    }
-
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -93,9 +88,10 @@ public class AuthorResourceIT {
         author.setPseudonym(DEFAULT_PSEUDONYM);
         return author;
     }
+
     /**
      * Create an updated entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -105,6 +101,18 @@ public class AuthorResourceIT {
         author.setLastName(UPDATED_LAST_NAME);
         author.setPseudonym(UPDATED_PSEUDONYM);
         return author;
+    }
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        final AuthorResource authorResource = new AuthorResource(authorService);
+        this.restAuthorMockMvc = MockMvcBuilders.standaloneSetup(authorResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     @BeforeEach
@@ -203,7 +211,7 @@ public class AuthorResourceIT {
             .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
             .andExpect(jsonPath("$.[*].pseudonym").value(hasItem(DEFAULT_PSEUDONYM)));
     }
-    
+
     @Test
     @Transactional
     public void getAuthor() throws Exception {
@@ -234,7 +242,7 @@ public class AuthorResourceIT {
         // Initialize the database
         authorService.save(author);
 
-        int databaseSizeBeforeUpdate = authorRepository.findAll().size();
+        final int databaseSizeBeforeUpdate = authorRepository.findAll().size();
 
         // Update the author
         Author updatedAuthor = authorRepository.findById(author.getId()).get();

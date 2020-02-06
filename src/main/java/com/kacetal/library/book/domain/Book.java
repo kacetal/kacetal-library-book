@@ -1,17 +1,39 @@
 package com.kacetal.library.book.domain;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.FetchType.LAZY;
+
 /**
  * A Book.
  */
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "book")
 public class Book implements Serializable {
@@ -44,81 +66,27 @@ public class Book implements Serializable {
     @Column(name = "cover_content_type")
     private String coverContentType;
 
-    @ManyToMany
+    @ManyToMany(cascade = {PERSIST, MERGE})
     @JoinTable(name = "book_authors",
-               joinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id"),
-               inverseJoinColumns = @JoinColumn(name = "authors_id", referencedColumnName = "id"))
+        joinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "authors_id", referencedColumnName = "id"))
+    @JsonIgnoreProperties("books")
+    @ToString.Exclude
     private Set<Author> authors = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JsonIgnoreProperties("books")
     private Publisher publisher;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
+    public void addAuthor(final Author author) {
+        this.authors.add(author);
+        author.getBooks().add(this);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void removeAuthor(final Author author) {
+        this.authors.remove(author);
+        author.getBooks().remove(this);
     }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public ZonedDateTime getPublishDate() {
-        return publishDate;
-    }
-
-    public void setPublishDate(ZonedDateTime publishDate) {
-        this.publishDate = publishDate;
-    }
-
-    public byte[] getCover() {
-        return cover;
-    }
-
-    public void setCover(byte[] cover) {
-        this.cover = cover;
-    }
-
-    public String getCoverContentType() {
-        return coverContentType;
-    }
-
-    public void setCoverContentType(String coverContentType) {
-        this.coverContentType = coverContentType;
-    }
-
-    public Set<Author> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(Set<Author> authors) {
-        this.authors = authors;
-    }
-
-    public Publisher getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(Publisher publisher) {
-        this.publisher = publisher;
-    }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
@@ -134,17 +102,5 @@ public class Book implements Serializable {
     @Override
     public int hashCode() {
         return 31;
-    }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-            "id=" + getId() +
-            ", isbn='" + getIsbn() + "'" +
-            ", title='" + getTitle() + "'" +
-            ", publishDate='" + getPublishDate() + "'" +
-            ", cover='" + getCover() + "'" +
-            ", coverContentType='" + getCoverContentType() + "'" +
-            "}";
     }
 }

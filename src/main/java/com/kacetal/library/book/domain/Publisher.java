@@ -1,15 +1,31 @@
 package com.kacetal.library.book.domain;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import static javax.persistence.CascadeType.ALL;
+
 /**
  * A Publisher.
  */
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "publisher")
 public class Publisher implements Serializable {
@@ -26,34 +42,19 @@ public class Publisher implements Serializable {
     @Column(name = "name", length = 50, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "publisher")
+    @OneToMany(mappedBy = "publisher", cascade = ALL, orphanRemoval = true)
+    @ToString.Exclude
     private Set<Book> books = new HashSet<>();
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
+    public void addBook(final Book book) {
+        this.books.add(book);
+        book.setPublisher(this);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void removeBook(final Book book) {
+        this.books.remove(book);
+        book.setPublisher(null);
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(Set<Book> books) {
-        this.books = books;
-    }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
@@ -69,13 +70,5 @@ public class Publisher implements Serializable {
     @Override
     public int hashCode() {
         return 31;
-    }
-
-    @Override
-    public String toString() {
-        return "Publisher{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            "}";
     }
 }

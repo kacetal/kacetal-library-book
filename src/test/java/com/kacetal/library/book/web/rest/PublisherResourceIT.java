@@ -5,7 +5,6 @@ import com.kacetal.library.book.domain.Publisher;
 import com.kacetal.library.book.repository.PublisherRepository;
 import com.kacetal.library.book.service.PublisherService;
 import com.kacetal.library.book.web.rest.errors.ExceptionTranslator;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -25,8 +24,13 @@ import java.util.List;
 import static com.kacetal.library.book.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for the {@link PublisherResource} REST controller.
@@ -35,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PublisherResourceIT {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
+
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
     @Autowired
@@ -62,6 +67,30 @@ public class PublisherResourceIT {
 
     private Publisher publisher;
 
+    /**
+     * Create an entity for this test.
+     * <p>
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Publisher createEntity(EntityManager em) {
+        Publisher publisher = new Publisher();
+        publisher.setName(DEFAULT_NAME);
+        return publisher;
+    }
+
+    /**
+     * Create an updated entity for this test.
+     * <p>
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Publisher createUpdatedEntity(EntityManager em) {
+        Publisher publisher = new Publisher();
+        publisher.setName(UPDATED_NAME);
+        return publisher;
+    }
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -72,29 +101,6 @@ public class PublisherResourceIT {
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter)
             .setValidator(validator).build();
-    }
-
-    /**
-     * Create an entity for this test.
-     *
-     * This is a static method, as tests for other entities might also need it,
-     * if they test an entity which requires the current entity.
-     */
-    public static Publisher createEntity(EntityManager em) {
-        Publisher publisher = new Publisher();
-        publisher.setName(DEFAULT_NAME);
-        return publisher;
-    }
-    /**
-     * Create an updated entity for this test.
-     *
-     * This is a static method, as tests for other entities might also need it,
-     * if they test an entity which requires the current entity.
-     */
-    public static Publisher createUpdatedEntity(EntityManager em) {
-        Publisher publisher = new Publisher();
-        publisher.setName(UPDATED_NAME);
-        return publisher;
     }
 
     @BeforeEach
@@ -171,7 +177,7 @@ public class PublisherResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(publisher.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
     }
-    
+
     @Test
     @Transactional
     public void getPublisher() throws Exception {
@@ -200,7 +206,7 @@ public class PublisherResourceIT {
         // Initialize the database
         publisherService.save(publisher);
 
-        int databaseSizeBeforeUpdate = publisherRepository.findAll().size();
+        final int databaseSizeBeforeUpdate = publisherRepository.findAll().size();
 
         // Update the publisher
         Publisher updatedPublisher = publisherRepository.findById(publisher.getId()).get();

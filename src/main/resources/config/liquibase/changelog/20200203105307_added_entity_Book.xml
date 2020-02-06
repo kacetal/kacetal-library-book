@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
-                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
 
-    
+
     <!--
         Added the entity Book.
     -->
@@ -16,22 +14,22 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="isbn" type="varchar(13)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="ux_book_isbn" />
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_book_isbn"/>
             </column>
             <column name="title" type="varchar(100)">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="publish_date" type="datetime">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="cover" type="longblob">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="cover_content_type" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="publisher_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
@@ -50,7 +48,7 @@
         </createTable>
 
         <addPrimaryKey columnNames="book_id, authors_id" tableName="book_authors"/>
-        
+
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 
@@ -64,9 +62,9 @@
     -->
     <changeSet id="20200203105307-1-data" author="jhipster" context="faker">
         <loadData
-                  file="config/liquibase/fake-data/book.csv"
-                  separator=";"
-                  tableName="book">
+            file="config/liquibase/fake-data/book.csv"
+            separator=";"
+            tableName="book">
             <column name="id" type="numeric"/>
             <column name="isbn" type="string"/>
             <column name="title" type="string"/>

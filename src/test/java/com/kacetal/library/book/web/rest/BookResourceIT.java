@@ -5,7 +5,6 @@ import com.kacetal.library.book.domain.Book;
 import com.kacetal.library.book.repository.BookRepository;
 import com.kacetal.library.book.service.BookService;
 import com.kacetal.library.book.web.rest.errors.ExceptionTranslator;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -13,7 +12,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -25,19 +23,27 @@ import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.kacetal.library.book.web.rest.TestUtil.sameInstant;
 import static com.kacetal.library.book.web.rest.TestUtil.createFormattingConversionService;
+import static com.kacetal.library.book.web.rest.TestUtil.sameInstant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for the {@link BookResource} REST controller.
@@ -46,17 +52,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BookResourceIT {
 
     private static final String DEFAULT_ISBN = "AAAAAAAAAA";
+
     private static final String UPDATED_ISBN = "BBBBBBBBBB";
 
     private static final String DEFAULT_TITLE = "AAAAAAAAAA";
+
     private static final String UPDATED_TITLE = "BBBBBBBBBB";
 
     private static final ZonedDateTime DEFAULT_PUBLISH_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+
     private static final ZonedDateTime UPDATED_PUBLISH_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     private static final byte[] DEFAULT_COVER = TestUtil.createByteArray(1, "0");
+
     private static final byte[] UPDATED_COVER = TestUtil.createByteArray(1, "1");
+
     private static final String DEFAULT_COVER_CONTENT_TYPE = "image/jpg";
+
     private static final String UPDATED_COVER_CONTENT_TYPE = "image/png";
 
     @Autowired
@@ -90,21 +102,9 @@ public class BookResourceIT {
 
     private Book book;
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        final BookResource bookResource = new BookResource(bookService);
-        this.restBookMockMvc = MockMvcBuilders.standaloneSetup(bookResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
-    }
-
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -117,9 +117,10 @@ public class BookResourceIT {
         book.setCoverContentType(DEFAULT_COVER_CONTENT_TYPE);
         return book;
     }
+
     /**
      * Create an updated entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -131,6 +132,18 @@ public class BookResourceIT {
         book.setCover(UPDATED_COVER);
         book.setCoverContentType(UPDATED_COVER_CONTENT_TYPE);
         return book;
+    }
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        final BookResource bookResource = new BookResource(bookService);
+        this.restBookMockMvc = MockMvcBuilders.standaloneSetup(bookResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     @BeforeEach
@@ -251,7 +264,7 @@ public class BookResourceIT {
             .andExpect(jsonPath("$.[*].coverContentType").value(hasItem(DEFAULT_COVER_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].cover").value(hasItem(Base64Utils.encodeToString(DEFAULT_COVER))));
     }
-    
+
     @SuppressWarnings({"unchecked"})
     public void getAllBooksWithEagerRelationshipsIsEnabled() throws Exception {
         BookResource bookResource = new BookResource(bookServiceMock);
@@ -264,7 +277,7 @@ public class BookResourceIT {
             .setMessageConverters(jacksonMessageConverter).build();
 
         restBookMockMvc.perform(get("/api/books?eagerload=true"))
-        .andExpect(status().isOk());
+            .andExpect(status().isOk());
 
         verify(bookServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
@@ -272,17 +285,17 @@ public class BookResourceIT {
     @SuppressWarnings({"unchecked"})
     public void getAllBooksWithEagerRelationshipsIsNotEnabled() throws Exception {
         BookResource bookResource = new BookResource(bookServiceMock);
-            when(bookServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-            MockMvc restBookMockMvc = MockMvcBuilders.standaloneSetup(bookResource)
+        when(bookServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        MockMvc restBookMockMvc = MockMvcBuilders.standaloneSetup(bookResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
 
         restBookMockMvc.perform(get("/api/books?eagerload=true"))
-        .andExpect(status().isOk());
+            .andExpect(status().isOk());
 
-            verify(bookServiceMock, times(1)).findAllWithEagerRelationships(any());
+        verify(bookServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @Test
@@ -317,7 +330,7 @@ public class BookResourceIT {
         // Initialize the database
         bookService.save(book);
 
-        int databaseSizeBeforeUpdate = bookRepository.findAll().size();
+        final int databaseSizeBeforeUpdate = bookRepository.findAll().size();
 
         // Update the book
         Book updatedBook = bookRepository.findById(book.getId()).get();
