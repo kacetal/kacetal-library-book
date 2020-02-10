@@ -32,7 +32,9 @@
     "entitySuffix": "",
     "dtoSuffix": "DTO",
     "otherModules": [],
-    "blueprints": []
+    "blueprints": [],
+    "herokuAppName": "kacetal-library-book",
+    "herokuDeployType": "git"
   },
   "entities": ["Book", "Author", "Publisher"]
 }
