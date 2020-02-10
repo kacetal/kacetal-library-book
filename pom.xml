@@ -22,7 +22,7 @@
     <properties>
         <!-- Build properties -->
         <maven.version>3.3.9</maven.version>
-        <java.version>11</java.version>
+        <java.version>12</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
@@ -618,9 +618,9 @@
                     <version>${jib-maven-plugin.version}</version>
                     <configuration>
                         <from>
-                            <!-- adoptopenjdk:11.0.6_10-jre-hotspot-bionic -->
+                            <!-- adoptopenjdk:12.0.2_10-jre-hotspot-bionic -->
                             <image>
-                                adoptopenjdk@sha256:7b963af158a60d58abdd43ad3bca4d39b0634e95c450a2e913518319d25ed090
+                                adoptopenjdk@sha256:2d755ee3464690512be367496028bb3061f0af310043f21c3e820bcb11d0d55c
                             </image>
                         </from>
                         <to>

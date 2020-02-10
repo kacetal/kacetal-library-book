@@ -1,4 +1,4 @@
-# kacetalLibraryBook
+# kacetalLibraryBook [![Build Status](https://travis-ci.org/kacetal/kacetal-library-book.svg?branch=master)](https://travis-ci.org/kacetal/kacetal-library-book)
 
 This application was generated using JHipster 6.6.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.6.0](https://www.jhipster.tech/documentation-archive/v6.6.0).
 
